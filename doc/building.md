@@ -1,6 +1,6 @@
 # Building and packaging
 
-All of this runs in a Debian 13 container with Trinity 14.1 and PackageKit. You only need Docker,
+Development happens in a Debian 13 container with Trinity 14.1 and PackageKit. You only need Docker,
 and a few GB of free disk space for the image.
 
 ## Commands
@@ -45,9 +45,13 @@ to check enum values; the application itself doesn't link against it.
 
 ## Continuous integration
 
-`.github/workflows/build.yml` runs on every push and pull request. It uses the same `dk` commands,
-then uploads the package, screenshots and logs as workflow artifacts. It has read-only access to
-the repository, and doesn't publish anything.
+`.github/workflows/build.yml` runs on every push and pull request. It builds the Debian package and
+uploads it as a workflow artifact. It has read-only access to the repository, and doesn't publish
+anything.
+
+It doesn't use Docker, which is only for development. `.github/build-deb.sh` creates a Debian 13
+chroot with `debootstrap`, adds the Trinity repository, installs what `debian/control` asks for, and
+runs `dpkg-buildpackage`. It doesn't run the tests, so run `./dk test` before pushing.
 
 ## The application icon
 
