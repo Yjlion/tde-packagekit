@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=Software Update Notifier
+Comment=Shows when software updates are available
+Exec=tdepackagekit-notifier
+Icon=tdepackagekit
+Terminal=false
+OnlyShowIn=TDE;
+X-TDE-autostart-condition=tdepackagekitrc:Notifier:Enabled:true
+X-TDE-StartupNotify=false

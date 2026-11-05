@@ -1,0 +1,12 @@
+[Desktop Entry]
+Type=Application
+Name=Package Installer
+GenericName=Package Installer
+Comment=Install a package file
+Exec=tdepackagekit --install-file %f
+Icon=tdepackagekit
+Terminal=false
+NoDisplay=true
+MimeType=application/vnd.debian.binary-package;application/x-deb;
+Categories=Qt;X-TDE;System;PackageManager;
+X-DCOP-ServiceType=Unique

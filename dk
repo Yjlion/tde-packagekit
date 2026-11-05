@@ -1,0 +1,58 @@
+#!/bin/bash
+# Build, test and package tdepackagekit inside the Debian/TDE Docker image.
+# Nothing is installed on the host.
+set -euo pipefail
+
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+IMAGE="${TDEPK_IMAGE:-tdepackagekit-dev:trixie}"
+VOLUME="${TDEPK_BUILD_VOLUME:-tdepackagekit-build}"
+
+usage() {
+    cat <<USAGE
+Usage: ./dk <command>
+
+  image        Build the Docker image
+  build        Configure and compile into the build volume
+  test         Run unit, fake-daemon, real-daemon and UI tests
+  screenshot   Regenerate the PNGs in screenshots/
+  deb          Build the Debian package into dist/
+  verify-deb   Install dist/*.deb in a fresh container and check it
+  lint         Lint the GitHub workflow and docs links
+  shell        Open a shell in the container
+  clean        Delete the build volume
+USAGE
+}
+
+ensure_image() {
+    docker image inspect "$IMAGE" >/dev/null 2>&1 || cmd_image
+}
+
+in_container() {
+    ensure_image
+    local tty=()
+    [ -t 0 ] && [ -t 1 ] && tty=(-it)
+    docker run --rm "${tty[@]}" --init \
+        -v "$ROOT:/src" -v "$VOLUME:/build" \
+        -w /src "$IMAGE" "$@"
+}
+
+cmd_image() {
+    docker build --build-arg "DEV_UID=$(id -u)" -t "$IMAGE" -f "$ROOT/docker/Dockerfile" "$ROOT/docker"
+}
+
+case "${1:-}" in
+    image)      cmd_image ;;
+    build)      in_container docker/ci.sh build ;;
+    test)       in_container docker/ci.sh test ;;
+    screenshot) in_container docker/ci.sh screenshot ;;
+    deb)        in_container docker/ci.sh deb ;;
+    verify-deb) in_container docker/ci.sh verify-deb ;;
+    lint)
+        in_container docker/ci.sh lint
+        docker run --rm -v "$ROOT:/repo" -w /repo rhysd/actionlint:1.7.7 -color .github/workflows/build.yml
+        ;;
+    shell)      in_container /bin/bash ;;
+    clean)      docker volume rm -f "$VOLUME" >/dev/null ;;
+    -h|--help|help|"") usage ;;
+    *) echo "Unknown command: $1" >&2; usage >&2; exit 2 ;;
+esac

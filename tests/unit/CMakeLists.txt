@@ -1,0 +1,7 @@
+include_directories( ${CMAKE_SOURCE_DIR}/src/pk ${TDE_INCLUDE_DIR} ${TQT_INCLUDE_DIRS} ${DBUS_TQT_INCLUDE_DIRS} )
+link_directories( ${TQT_LIBRARY_DIRS} ${TDE_LIB_DIR} )
+pkg_search_module( PK_GLIB REQUIRED packagekit-glib2 )
+add_executable( test_core test_core.cpp )
+target_include_directories( test_core PRIVATE ${PK_GLIB_INCLUDE_DIRS} )
+target_link_libraries( test_core tdepkcore-static ${TQT_LIBRARIES} ${DBUS_TQT_LIBRARIES} tdecore-shared ${PK_GLIB_LIBRARIES} )
+add_test( NAME core COMMAND test_core )
