@@ -10,6 +10,7 @@
 
 #include <dcopclient.h>
 #include <kcombobox.h>
+#include <krun.h>
 #include <tdeapplication.h>
 #include <tdelocale.h>
 
@@ -23,7 +24,8 @@ SettingsDialog::SettingsDialog(TQWidget *parent)
 {
     TQVBox *page = makeVBoxMainWidget();
 
-    m_enabled = new TQCheckBox(i18n("&Show a tray icon when updates are available"), page, "notifierenabled");
+    m_enabled = new TQCheckBox(i18n("&Run the update notifier in the system tray"), page, "notifierenabled");
+    m_hideIdle = new TQCheckBox(i18n("&Hide the tray icon when there are no updates"), page, "hidewhenidle");
 
     TQWidget *row = new TQWidget(page);
     TQHBoxLayout *rowLayout = new TQHBoxLayout(row, 0, 6);
@@ -48,6 +50,7 @@ SettingsDialog::SettingsDialog(TQWidget *parent)
     note->setAlignment(TQt::WordBreak);
 
     m_enabled->setChecked(TdePkSettings::notifierEnabled());
+    m_hideIdle->setChecked(TdePkSettings::hideWhenIdle());
     const int hours = TdePkSettings::checkIntervalHours();
     int index = 1;
     for (int i = 0; i < IntervalCount; ++i) {
@@ -60,11 +63,12 @@ SettingsDialog::SettingsDialog(TQWidget *parent)
 
     connect(m_enabled, TQ_SIGNAL(toggled(bool)), TQ_SLOT(enabledToggled(bool)));
     enabledToggled(m_enabled->isChecked());
-    resize(430, 240);
+    resize(430, 260);
 }
 
 void SettingsDialog::enabledToggled(bool on)
 {
+    m_hideIdle->setEnabled(on);
     m_interval->setEnabled(on);
     m_notifyAll->setEnabled(on);
     m_notifySecurity->setEnabled(on);
@@ -75,9 +79,15 @@ void SettingsDialog::slotOk()
     TdePkSettings::setNotifierEnabled(m_enabled->isChecked());
     TdePkSettings::setCheckIntervalHours(Intervals[m_interval->currentItem()]);
     TdePkSettings::setNotifySecurityOnly(m_notifySecurity->isChecked());
-    /* Tell a running notifier. It is fine if there is none. */
-    TQByteArray none;
-    kapp->dcopClient()->send("tdepackagekit-notifier", "notifier", "reloadSettings()", none);
+    TdePkSettings::setHideWhenIdle(m_hideIdle->isChecked());
+    DCOPClient *dcop = kapp->dcopClient();
+    if (dcop->isApplicationRegistered("tdepackagekit-notifier")) {
+        TQByteArray none;
+        dcop->send("tdepackagekit-notifier", "notifier", "reloadSettings()", none);
+    } else if (m_enabled->isChecked()) {
+        /* Turned on now: start it instead of waiting for the next login. */
+        KRun::runCommand("tdepackagekit-notifier");
+    }
     KDialogBase::slotOk();
 }
 

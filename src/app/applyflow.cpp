@@ -9,6 +9,7 @@
 
 #include "changequeue.h"
 #include "confirmchangesdialog.h"
+#include "errordialog.h"
 #include "euladialog.h"
 #include "packageid.h"
 #include "pktransaction.h"
@@ -301,11 +302,7 @@ void ApplyFlow::handleStepFailure(uint exit)
     m_dialog->hide();
     const TQString message = m_errorCode ? Pk::errorLabel(m_errorCode)
                                          : i18n("The package operation did not complete.");
-    if (m_errorDetails.isEmpty()) {
-        KMessageBox::error(m_parent, message, i18n("Could Not Apply Changes"));
-    } else {
-        KMessageBox::detailedError(m_parent, message, m_errorDetails, i18n("Could Not Apply Changes"));
-    }
+    ErrorDialog::report(m_parent, i18n("Could Not Apply Changes"), message, m_errorDetails);
     finish(m_changed);
 }
 

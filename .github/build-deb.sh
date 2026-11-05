@@ -28,7 +28,7 @@ curl -fsSL "$TDE_MIRROR/trinity-keyring.deb" -o "$CHROOT/tmp/trinity-keyring.deb
 echo "$TDE_KEYRING_SHA256  $CHROOT/tmp/trinity-keyring.deb" | sha256sum -c -
 
 mkdir -p "$CHROOT/build/src"
-tar -C "$SOURCE" --exclude=.git --exclude=dist --exclude=screenshots -cf - . | tar -C "$CHROOT/build/src" -xf -
+tar -C "$SOURCE" --exclude=.git --exclude=dist -cf - . | tar -C "$CHROOT/build/src" -xf -
 
 chroot "$CHROOT" /bin/bash -euo pipefail -c "
     export DEBIAN_FRONTEND=noninteractive LC_ALL=C.UTF-8

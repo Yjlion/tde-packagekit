@@ -10,6 +10,7 @@
 #include <tdelistview.h>
 #include <tdelocale.h>
 
+#include "packageicon.h"
 #include "packageid.h"
 #include "pkenums.h"
 
@@ -84,6 +85,7 @@ ConfirmChangesDialog::ConfirmChangesDialog(const PkPackageList &changes, TQWidge
             }
             const PackageId id((*it).id);
             lastChild = new TQListViewItem(header, lastChild, id.name(), id.version(), (*it).summary);
+            lastChild->setPixmap(0, PackageIcon::small(id.name()));
             ++count;
         }
         if (header) {

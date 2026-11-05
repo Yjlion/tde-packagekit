@@ -35,7 +35,7 @@ case "${1:-}" in
         # Builds from a copy, because dpkg-buildpackage writes next to the source.
         rm -rf /build/deb
         mkdir -p /build/deb/src
-        tar -C /src --exclude=.git --exclude=dist --exclude=screenshots -cf - . | tar -C /build/deb/src -xf -
+        tar -C /src --exclude=.git --exclude=dist -cf - . | tar -C /build/deb/src -xf -
         (cd /build/deb/src && dpkg-buildpackage -us -uc -b)
         mkdir -p /src/dist
         rm -f /src/dist/*.deb
@@ -51,6 +51,13 @@ case "${1:-}" in
         desktop-file-validate data/tdepackagekit.desktop data/tdepackagekit-install-file.desktop \
             data/tdepackagekit-notifier.desktop
         bash -n dk docker/ci.sh docker/test-services.sh tests/ui/*.sh tests/fixtures/build-repo.sh
+        # Man pages: any groff warning fails.
+        for page in doc/man/*.1; do
+            out=$(LC_ALL=C.UTF-8 groff -man -ww -z "$page" 2>&1)
+            [ -z "$out" ] || { echo "$page: $out"; exit 1; }
+        done
+        # The handbook must be valid DocBook, or KHelpCenter can't show it.
+        (cd /tmp && meinproc --check /src/doc/en/index.docbook)
         ;;
     *) echo "unknown: ${1:-}" >&2; exit 2 ;;
 esac

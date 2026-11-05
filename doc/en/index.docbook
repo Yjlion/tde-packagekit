@@ -1,0 +1,486 @@
+<?xml version="1.0" ?>
+<!DOCTYPE book PUBLIC "-//KDE//DTD DocBook XML V4.2-Based Variant V1.1//EN" "dtd/kdex.dtd" [
+  <!ENTITY kappname "Software Management">
+  <!ENTITY package "tdepackagekit">
+  <!ENTITY % addindex "IGNORE">
+  <!ENTITY % English "INCLUDE">
+]>
+
+<book lang="&language;">
+
+<bookinfo>
+<title>The &kappname; Handbook</title>
+
+<authorgroup>
+<author><firstname>Yjlion</firstname></author>
+<!-- TRANS:ROLES_OF_TRANSLATORS -->
+</authorgroup>
+
+<copyright>
+<year>2026</year>
+<holder>Yjlion</holder>
+</copyright>
+
+<legalnotice>&underGPL;</legalnotice>
+
+<date>2026-11-05</date>
+<releaseinfo>0.1.0</releaseinfo>
+
+<abstract>
+<para>
+&kappname; (<command>tdepackagekit</command>) installs, removes and updates software on the
+Trinity Desktop Environment. It works through PackageKit, so it uses the same package database
+as <command>apt</command> and the other package tools on your system.
+</para>
+</abstract>
+
+<keywordset>
+<keyword>TDE</keyword>
+<keyword>Trinity</keyword>
+<keyword>PackageKit</keyword>
+<keyword>tdepackagekit</keyword>
+<keyword>software</keyword>
+<keyword>packages</keyword>
+<keyword>updates</keyword>
+</keywordset>
+</bookinfo>
+
+<chapter id="introduction">
+<title>Introduction</title>
+
+<para>
+&kappname; is a package manager for Trinity. In one window you can search for software, install
+and remove it, review and install updates, see what has changed on your system, and turn software
+repositories on or off. A tray icon, the update notifier, tells you when updates are available.
+</para>
+
+<para>
+Nothing changes on your system until you press <guibutton>Apply</guibutton>. You can tick several
+packages first, then apply them together. Before anything happens you see every package that
+will be installed or removed as a result.
+</para>
+
+<para>
+Open it from the Trinity menu under <guimenu>System</guimenu>, <guimenuitem>Software
+Management</guimenuitem>, or run <command>tdepackagekit</command>.
+</para>
+
+<warning>
+<para>
+This program was written by an AI under human direction, and its code has not been reviewed line
+by line. It changes the software installed on your computer, so keep backups.
+</para>
+</warning>
+
+<screenshot>
+<screeninfo>The Browse page</screeninfo>
+<mediaobject>
+<imageobject><imagedata fileref="browse-details.png" format="PNG"/></imageobject>
+<textobject><phrase>The Browse page</phrase></textobject>
+</mediaobject>
+</screenshot>
+</chapter>
+
+<chapter id="using">
+<title>Using &kappname;</title>
+
+<para>
+The sidebar on the left switches between four pages: <guilabel>Browse</guilabel>,
+<guilabel>Updates</guilabel>, <guilabel>History</guilabel> and <guilabel>Repositories</guilabel>.
+You can also press <keycombo action="simul"><keycap>Ctrl</keycap><keycap>1</keycap></keycombo>
+to <keycombo action="simul"><keycap>Ctrl</keycap><keycap>4</keycap></keycombo>.
+The bar at the bottom of the window shows your pending changes, with the
+<guibutton>Apply</guibutton> and <guibutton>Clear</guibutton> buttons.
+</para>
+
+<sect1 id="browse">
+<title>Finding and installing software</title>
+
+<para>
+Type in the search box and press <keycap>Enter</keycap>, or click a category on the left. The
+list next to the search box chooses what to search: package names, descriptions, or file names.
+</para>
+
+<para>
+The filters below the search box narrow the results:
+</para>
+<itemizedlist>
+<listitem><para><guilabel>Show</guilabel>: all packages, installed packages only, or available
+packages only.</para></listitem>
+<listitem><para><guilabel>Graphical applications only</guilabel> hides libraries and
+command-line tools.</para></listitem>
+<listitem><para><guilabel>Newest versions only</guilabel> shows one version of each
+package.</para></listitem>
+</itemizedlist>
+<para>
+A filter is hidden if your package system doesn't support it.
+</para>
+
+<para>
+Select a package to see its details below the list. The tabs show its description, its files,
+what it depends on, and what requires it.
+</para>
+
+<itemizedlist>
+<listitem><para>Tick a package to install it.</para></listitem>
+<listitem><para>Untick an installed package to remove it.</para></listitem>
+</itemizedlist>
+
+<para>
+Ticking only queues the change. Keep browsing and tick more, then press
+<guibutton>Apply</guibutton>. <guibutton>Clear</guibutton> drops every pending change.
+</para>
+
+<sect2 id="app-icons">
+<title>Application icons</title>
+
+<para>
+The package lists can show each application's icon. The icons come from the AppStream data that
+Debian publishes for its repositories, and apt only downloads them if one of these packages is
+installed:
+</para>
+<itemizedlist>
+<listitem><para><literal>apt-config-icons</literal>: icons at 48 and 64 pixels.</para></listitem>
+<listitem><para><literal>apt-config-icons-large</literal>: also 128 pixel icons.</para></listitem>
+</itemizedlist>
+<para>
+Install one, then refresh the package information with <guimenuitem>Check for Updates</guimenuitem>
+(or <userinput><command>sudo apt update</command></userinput>). The icons appear the next time
+you start &kappname;. Packages that aren't applications, such as libraries, have no icon of their
+own and show a generic package icon. Without these packages, the lists show no icons.
+</para>
+</sect2>
+</sect1>
+
+<sect1 id="applying">
+<title>Applying changes</title>
+
+<para>
+Pressing <guibutton>Apply</guibutton> first works out what will happen, without changing
+anything. If other packages are affected, if anything will be removed, or if you are mixing
+installs and updates, you are asked to confirm:
+</para>
+
+<screenshot>
+<screeninfo>The Confirm Changes dialog</screeninfo>
+<mediaobject>
+<imageobject><imagedata fileref="confirm-changes.png" format="PNG"/></imageobject>
+<textobject><phrase>The Confirm Changes dialog</phrase></textobject>
+</mediaobject>
+</screenshot>
+
+<para>
+The changes then run in a progress window. <guibutton>Cancel</guibutton> works while the package
+system allows it.
+</para>
+
+<para>
+You may be asked for your password. That prompt comes from the Trinity authentication agent, in
+the <literal>polkit-agent-tde</literal> package. Without a running agent, changes fail with a
+<quote>not authorized</quote> error.
+</para>
+
+<para>
+Depending on the packages, you may also be asked:
+</para>
+<variablelist>
+<varlistentry>
+<term><guilabel>License Agreement</guilabel></term>
+<listitem><para>The package has terms you must accept. <guibutton>Continue</guibutton> stays
+disabled until you tick the box.</para></listitem>
+</varlistentry>
+<varlistentry>
+<term><guilabel>Trust This Software Source?</guilabel></term>
+<listitem><para>The package is signed with a key your system doesn't know. Check the fingerprint
+with the publisher before you trust it. Pressing <keycap>Enter</keycap> cancels.</para></listitem>
+</varlistentry>
+<varlistentry>
+<term><guilabel>Unverified Software</guilabel></term>
+<listitem><para>Nothing can confirm where the package came from. Every local
+<filename>.deb</filename> file shows this. Install it only if you trust its source.</para></listitem>
+</varlistentry>
+<varlistentry>
+<term><guilabel>Restart Required</guilabel></term>
+<listitem><para>Log out, or restart the computer, to finish the update.</para></listitem>
+</varlistentry>
+</variablelist>
+
+<para>
+If something fails, the changes that didn't happen stay pending, so you can try again. See
+<xref linkend="errors"/>.
+</para>
+</sect1>
+
+<sect1 id="updates">
+<title>Updates</title>
+
+<screenshot>
+<screeninfo>The Updates page</screeninfo>
+<mediaobject>
+<imageobject><imagedata fileref="updates-details.png" format="PNG"/></imageobject>
+<textobject><phrase>The Updates page</phrase></textobject>
+</mediaobject>
+</screenshot>
+
+<para>
+Updates are grouped by severity, with critical and security updates first. Select an update to
+see what it changes, its changelog and any security advisories.
+</para>
+
+<para>
+The first time you open this page in a session, every update is ticked, so
+<guibutton>Apply</guibutton> installs them all. Untick any you want to skip, or press
+<guibutton>Select None</guibutton>. Blocked updates, which need something else to change first,
+can't be ticked.
+</para>
+
+<para>
+<guibutton>Check for Updates</guibutton> (also in the <guimenu>File</guimenu> menu, and
+<keycap>F5</keycap>) downloads fresh package information. The sidebar shows how many updates are
+waiting.
+</para>
+</sect1>
+
+<sect1 id="history">
+<title>History</title>
+
+<screenshot>
+<screeninfo>The History page</screeninfo>
+<mediaobject>
+<imageobject><imagedata fileref="history.png" format="PNG"/></imageobject>
+<textobject><phrase>The History page</phrase></textobject>
+</mediaobject>
+</screenshot>
+
+<para>
+Lists what was installed, removed and updated, when, and whether it worked. Select a row to see
+its packages. The list includes changes made with other PackageKit tools.
+</para>
+</sect1>
+
+<sect1 id="repositories">
+<title>Repositories</title>
+
+<screenshot>
+<screeninfo>The Repositories page</screeninfo>
+<mediaobject>
+<imageobject><imagedata fileref="repositories.png" format="PNG"/></imageobject>
+<textobject><phrase>The Repositories page</phrase></textobject>
+</mediaobject>
+</screenshot>
+
+<para>
+Untick a repository to stop using it, and tick it again to turn it back on. You will usually be
+asked for your password.
+</para>
+
+<para>
+Adding repositories isn't offered, because PackageKit has no general way to do it. On Debian, add
+them with <command>apt</command> or by adding a file to
+<filename class="directory">/etc/apt/sources.list.d/</filename>.
+</para>
+</sect1>
+
+<sect1 id="install-file">
+<title>Installing a package file</title>
+
+<para>
+Open a <filename>.deb</filename> file from &konqueror;, or run:
+</para>
+<screen><userinput><command>tdepackagekit</command> <option>--install-file</option> <replaceable>./some-package.deb</replaceable></userinput></screen>
+<para>
+You see what will change, and a warning that local files can't be verified.
+</para>
+</sect1>
+</chapter>
+
+<chapter id="notifier">
+<title>The update notifier</title>
+
+<para>
+The update notifier, <command>tdepackagekit-notifier</command>, starts when you log in and puts an
+icon in the system tray. Its tooltip says whether updates are available. When there are updates it
+shows a short message, and the icon changes to a warning if any of them fix security problems.
+</para>
+
+<screenshot>
+<screeninfo>The notifier's message</screeninfo>
+<mediaobject>
+<imageobject><imagedata fileref="notifier-popup.png" format="PNG"/></imageobject>
+<textobject><phrase>The notifier's message</phrase></textobject>
+</mediaobject>
+</screenshot>
+
+<para>
+Click the icon to open the Updates page. Right-click it to check now, change settings, or quit
+the notifier until the next login.
+</para>
+
+<para>
+It waits about two minutes after login before its first check, so that logging in stays fast.
+It only tells you about updates. <emphasis>It never installs anything by itself.</emphasis>
+</para>
+
+<para>
+If you don't want an icon while there is nothing to install, turn on
+<guilabel>Hide the tray icon when there are no updates</guilabel> in the settings. The notifier
+then keeps running, and the icon only appears when updates are available.
+</para>
+</chapter>
+
+<chapter id="settings">
+<title>Settings</title>
+
+<screenshot>
+<screeninfo>The settings dialog</screeninfo>
+<mediaobject>
+<imageobject><imagedata fileref="settings.png" format="PNG"/></imageobject>
+<textobject><phrase>The settings dialog</phrase></textobject>
+</mediaobject>
+</screenshot>
+
+<para>
+Open <menuchoice><guimenu>Settings</guimenu><guimenuitem>Configure Software
+Management...</guimenuitem></menuchoice>, or <guimenuitem>Configure...</guimenuitem> in the
+notifier's menu.
+</para>
+
+<variablelist>
+<varlistentry>
+<term><guilabel>Run the update notifier in the system tray</guilabel></term>
+<listitem><para>Turns the notifier on or off. Turning it on starts it straight away, and it also
+starts at every login. Turning it off stops it.</para></listitem>
+</varlistentry>
+<varlistentry>
+<term><guilabel>Hide the tray icon when there are no updates</guilabel></term>
+<listitem><para>Keeps the tray clear while your software is up to date.</para></listitem>
+</varlistentry>
+<varlistentry>
+<term><guilabel>Check for updates</guilabel></term>
+<listitem><para>How often the notifier downloads fresh package information: every 6 hours, daily,
+weekly, monthly or never. With <guilabel>Never</guilabel> it still notices updates that another
+tool has downloaded.</para></listitem>
+</varlistentry>
+<varlistentry>
+<term><guilabel>Notify Me About</guilabel></term>
+<listitem><para>All updates, or security updates only.</para></listitem>
+</varlistentry>
+</variablelist>
+
+<para>
+The settings are stored in <filename>~/.trinity/share/config/tdepackagekitrc</filename>.
+</para>
+</chapter>
+
+<chapter id="troubleshooting">
+<title>Troubleshooting</title>
+
+<sect1 id="errors">
+<title>Error messages</title>
+
+<para>
+When something goes wrong, a message says what happened. Press <guibutton>Details</guibutton> to
+see the full report from the package system, for example the output of
+<command>dpkg</command>. The window can be resized or maximized to read long reports, and it
+remembers the size you choose. You can select and copy the text, to search for it or include it
+in a bug report.
+</para>
+
+<screenshot>
+<screeninfo>An error with details</screeninfo>
+<mediaobject>
+<imageobject><imagedata fileref="error-dialog.png" format="PNG"/></imageobject>
+<textobject><phrase>An error with details</phrase></textobject>
+</mediaobject>
+</screenshot>
+</sect1>
+
+<sect1 id="problems">
+<title>Common problems</title>
+
+<variablelist>
+<varlistentry>
+<term><quote>PackageKit Not Available</quote></term>
+<listitem><para>The PackageKit service could not be reached. Check that the
+<literal>packagekit</literal> package is installed. The service starts on demand, so it doesn't
+need to be running beforehand.</para></listitem>
+</varlistentry>
+<varlistentry>
+<term><quote>Not authorized</quote>, with no password prompt</term>
+<listitem><para>No authentication agent is running. Install <literal>polkit-agent-tde</literal>
+and log in again.</para></listitem>
+</varlistentry>
+<varlistentry>
+<term>The package system is busy</term>
+<listitem><para>Another program, such as <command>apt</command> or an automatic update, is
+changing packages. Wait for it to finish and try again.</para></listitem>
+</varlistentry>
+<varlistentry>
+<term>No icon in the system tray</term>
+<listitem><para>Check that <guilabel>Run the update notifier in the system tray</guilabel> is on,
+and that <guilabel>Hide the tray icon when there are no updates</guilabel> is off. To see whether
+the notifier is running, run <userinput><command>pgrep -a
+tdepackagekit-notifier</command></userinput>. You can start it by hand with
+<userinput><command>tdepackagekit-notifier</command></userinput>.</para></listitem>
+</varlistentry>
+<varlistentry>
+<term>No application icons in the lists</term>
+<listitem><para>Install <literal>apt-config-icons</literal> and refresh the package information.
+See <xref linkend="app-icons"/>.</para></listitem>
+</varlistentry>
+</variablelist>
+</sect1>
+</chapter>
+
+<chapter id="commands">
+<title>Command line</title>
+
+<para>
+<command>tdepackagekit</command> takes these options, as well as the usual Trinity and TQt
+options:
+</para>
+
+<variablelist>
+<varlistentry>
+<term><option>--updates</option></term>
+<listitem><para>Open the Updates page.</para></listitem>
+</varlistentry>
+<varlistentry>
+<term><option>--settings</option></term>
+<listitem><para>Open the settings dialog.</para></listitem>
+</varlistentry>
+<varlistentry>
+<term><option>--install-file</option> <replaceable>file</replaceable></term>
+<listitem><para>Install a package file. It can be given more than once.</para></listitem>
+</varlistentry>
+</variablelist>
+
+<para>
+Only one copy of &kappname; runs at a time. If it is already open, these options act on the open
+window.
+</para>
+
+<para>
+See also the manual pages: <userinput><command>man tdepackagekit</command></userinput> and
+<userinput><command>man tdepackagekit-notifier</command></userinput>.
+</para>
+</chapter>
+
+<chapter id="credits">
+<title>Credits and license</title>
+
+<para>
+&kappname; is maintained by Yjlion. Report problems at
+<ulink url="https://github.com/Yjlion/tde-packagekit/issues">https://github.com/Yjlion/tde-packagekit/issues</ulink>.
+</para>
+
+<para>
+Its layout follows Apper, and its package list and details follow gnome-packagekit.
+</para>
+
+<!-- TRANS:CREDIT_FOR_TRANSLATORS -->
+
+&underGPL;
+</chapter>
+
+</book>

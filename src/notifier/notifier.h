@@ -51,6 +51,7 @@ private:
     uint m_security;
     uint m_lastNotified;
     bool m_pendingList;
+    bool m_known; /* an update list has been read at least once */
 };
 
 #endif

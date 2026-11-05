@@ -8,6 +8,7 @@
 #include <tqtimer.h>
 #include <tqwidgetstack.h>
 
+#include <khelpmenu.h>
 #include <kiconloader.h>
 #include <kpushbutton.h>
 #include <kstatusbar.h>
@@ -24,6 +25,7 @@
 
 #include "applyflow.h"
 #include "browsepage.h"
+#include "errordialog.h"
 #include "changequeue.h"
 #include "historypage.h"
 #include "pkdaemon.h"
@@ -124,7 +126,12 @@ void MainWindow::buildMenus()
     KStdAction::preferences(this, TQ_SLOT(configure()), ac)->plug(settings);
     menuBar()->insertItem(i18n("&Settings"), settings);
 
-    menuBar()->insertItem(i18n("&Help"), helpMenu());
+    TQPopupMenu *help = helpMenu();
+    /* Trinity's standard help menu adds "Report Bug...", which files reports in
+       Trinity's own bug tracker. This isn't a Trinity project, so the item is
+       taken out. Delete the next line to bring it back. */
+    help->removeItem(KHelpMenu::menuReportBug);
+    menuBar()->insertItem(i18n("&Help"), help);
 }
 
 void MainWindow::showPage(int page)
@@ -270,10 +277,11 @@ void MainWindow::onDaemonUnavailable(const TQString &reason)
 
 void MainWindow::reportUnavailable()
 {
-    KMessageBox::detailedSorry(this, i18n("The PackageKit service could not be reached, so software "
-                                          "cannot be managed right now. Check that the packagekit "
-                                          "package is installed."),
-                               m_unavailableReason, i18n("PackageKit Not Available"));
+    ErrorDialog::report(this, i18n("PackageKit Not Available"),
+                        i18n("The PackageKit service could not be reached, so software "
+                             "cannot be managed right now. Check that the packagekit "
+                             "package is installed."),
+                        m_unavailableReason, ErrorDialog::Sorry);
 }
 
 void MainWindow::onDaemonChanged()

@@ -8,7 +8,8 @@ tdepackagekit             tdepackagekit-notifier
          \                   /
           libtdepkcore (static, no widgets)
           PkDaemon, PkTransaction, PkEnums,
-          PackageId, ChangeQueue, TdePkSettings
+          PackageId, ChangeQueue, TdePkSettings,
+          AppStreamIcons
                     |
               libdbus-1-tqt
                     |  system bus
@@ -61,6 +62,13 @@ with `pk-enum.h` at compile time.
 
 **`ChangeQueue`** holds pending changes, shared by the Browse and Updates pages.
 
+**`AppStreamIcons`** finds application icons. With `apt-config-icons`, AppStream unpacks icons as
+`<root>/<origin>/<W>x<H>[@2]/<package>_<icon>.png`, under `/var/lib/swcatalog/icons` (AppStream 1.x)
+or `/var/lib/app-info/icons` (0.x). Debian package names can't contain `_`, so the file name says
+which package an icon is for, and no YAML has to be parsed. The directories are scanned once, on
+first use. `TDEPK_APPSTREAM_ICON_DIRS` replaces the list of roots, for tests. In the app,
+`PackageIcon::small()` scales and caches the icons for the lists.
+
 ## Applying changes (`ApplyFlow`)
 
 ```
@@ -83,11 +91,19 @@ itself when it ends. Late results can't reach the page.
 Search results are buffered and added every 200 ms with sorting off, so a large result set
 doesn't sort on each insert.
 
+Errors with details go through `ErrorDialog::report()`, not `KMessageBox::detailedError`. The
+latter shows details as a TQDialog extension, and TQt fixes a dialog's size while an extension is
+showing, so long reports couldn't be read.
+
 ## Notifier (`src/notifier`)
 
 A `KSystemTray` that checks when due and on `UpdatesChanged`. It refreshes with `force=false`. It has
 no code that installs anything, and a test confirms it never calls an install method. The settings
-dialog tells it to reload through DCOP.
+dialog tells it to reload through DCOP, or starts it if it was turned on and isn't running.
+
+Its icon shows from the start, so users can see it's running; `HideWhenIdle` hides it while there
+are no updates. It starts at login from `share/autostart/tdepackagekit-notifier.desktop`, which
+Trinity's `tdelauncher` runs in autostart phase 2 unless `Enabled` is false.
 
 ## Settings
 

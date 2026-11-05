@@ -14,7 +14,7 @@ tde_add_executable( tdepackagekit AUTOMOC
     main.cpp mainwindow.cpp applyflow.cpp queryhelper.cpp
     browsepage.cpp updatespage.cpp historypage.cpp repospage.cpp
     transactiondialog.cpp confirmchangesdialog.cpp signaturedialog.cpp
-    euladialog.cpp settingsdialog.cpp
+    euladialog.cpp settingsdialog.cpp packageicon.cpp errordialog.cpp
   LINK tdepkcore-static tdeui-shared tdecore-shared tdeio-shared DCOP-shared ${DBUS_TQT_LIBRARIES}
   DESTINATION ${BIN_INSTALL_DIR}
 )

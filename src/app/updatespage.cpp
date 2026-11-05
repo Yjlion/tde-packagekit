@@ -14,9 +14,10 @@
 #include <tdeglobal.h>
 #include <tdelistview.h>
 #include <tdelocale.h>
-#include <tdemessagebox.h>
 
 #include "changequeue.h"
+#include "errordialog.h"
+#include "packageicon.h"
 #include "packageid.h"
 #include "pkdaemon.h"
 #include "pkenums.h"
@@ -33,6 +34,7 @@ public:
           m_page(page), m_package(package)
     {
         const PackageId id(package.id);
+        setPixmap(ColName, PackageIcon::small(id.name()));
         setText(ColVersion, id.version());
         setText(ColSummary, package.summary);
         setEnabled(package.info != Pk::InfoBlocked);
@@ -352,8 +354,7 @@ void UpdatesPage::onRefreshFinished(uint exit, uint)
 void UpdatesPage::afterRefresh()
 {
     if (m_refreshFailed) {
-        KMessageBox::detailedError(this, Pk::errorLabel(m_errorCode), m_errorDetails,
-                                   i18n("Could Not Refresh"));
+        ErrorDialog::report(this, i18n("Could Not Refresh"), Pk::errorLabel(m_errorCode), m_errorDetails);
     }
     load();
 }

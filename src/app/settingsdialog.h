@@ -22,6 +22,7 @@ private slots:
 
 private:
     TQCheckBox *m_enabled;
+    TQCheckBox *m_hideIdle;
     KComboBox *m_interval;
     TQRadioButton *m_notifyAll;
     TQRadioButton *m_notifySecurity;
