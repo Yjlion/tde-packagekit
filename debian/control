@@ -1,0 +1,23 @@
+Source: tdepackagekit-trinity
+Section: admin
+Priority: optional
+Maintainer: Yjlion <32956705+Yjlion@users.noreply.github.com>
+Homepage: https://github.com/Yjlion/tde-packagekit
+Build-Depends: debhelper-compat (= 13), cmake, ninja-build, pkg-config,
+ tde-cmake, tdelibs14-trinity-dev, libtqt3-mt-dev, tqt3-dev-tools,
+ libdbus-1-dev, libdbus-1-tqt-dev
+Standards-Version: 4.7.0
+Rules-Requires-Root: no
+
+Package: tdepackagekit-trinity
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, packagekit
+Recommends: polkit-agent-tde
+Description: PackageKit software manager for the Trinity Desktop Environment
+ Install, remove and update software on Trinity with one window: browse and
+ search packages, review and apply updates, see the history of changes, and
+ enable or disable repositories. A tray icon says when updates are available,
+ and package files can be installed by opening them.
+ .
+ It talks to the PackageKit service, so it works with the same package
+ database and tools as the rest of the system.

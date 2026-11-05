@@ -1,0 +1,17 @@
+#!/usr/bin/make -f
+export DEB_BUILD_MAINT_OPTIONS = hardening=+all
+
+%:
+	dh $@ --buildsystem=cmake+ninja
+
+override_dh_auto_configure:
+	PATH=/opt/trinity/bin:$$PATH dh_auto_configure -- \
+		-DCMAKE_INSTALL_PREFIX=/opt/trinity \
+		-DCMAKE_BUILD_TYPE=RelWithDebInfo \
+		-DBUILD_TESTING=OFF
+
+override_dh_auto_test:
+
+# Trinity's libraries live outside the default search path.
+override_dh_shlibdeps:
+	dh_shlibdeps -l/opt/trinity/lib

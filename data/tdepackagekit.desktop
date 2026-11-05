@@ -1,0 +1,11 @@
+[Desktop Entry]
+Type=Application
+Name=Software Management
+GenericName=Package Manager
+Comment=Install, remove and update software
+Exec=tdepackagekit
+Icon=tdepackagekit
+Terminal=false
+Categories=Qt;X-TDE;System;PackageManager;
+OnlyShowIn=TDE;
+X-DCOP-ServiceType=Unique
