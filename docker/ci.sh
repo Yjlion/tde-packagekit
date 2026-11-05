@@ -1,5 +1,5 @@
 #!/bin/bash
-# Runs inside the container. Called by ./dk and by GitHub Actions through ./dk.
+# Runs inside the development container. Called by ./dk.
 set -euo pipefail
 cd /src
 BUILD=/build/tree

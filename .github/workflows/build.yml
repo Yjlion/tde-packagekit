@@ -1,4 +1,4 @@
-name: Build and test
+name: Build Debian package
 
 on:
   push:
@@ -8,52 +8,18 @@ permissions:
   contents: read
 
 jobs:
-  build:
+  deb:
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
 
-      - uses: docker/setup-buildx-action@v3
+      - name: Build the package for Debian 13 and Trinity 14.1
+        run: sudo .github/build-deb.sh
 
-      - name: Find the runner's user ID
-        id: user
-        run: echo "uid=$(id -u)" >> "$GITHUB_OUTPUT"
-
-      - name: Build the Docker image
-        uses: docker/build-push-action@v6
-        with:
-          context: docker
-          file: docker/Dockerfile
-          load: true
-          tags: tdepackagekit-dev:trixie
-          build-args: DEV_UID=${{ steps.user.outputs.uid }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
-
-      - name: Compile
-        run: ./dk build
-
-      - name: Test
-        run: ./dk test 2>&1 | tee test.log; exit "${PIPESTATUS[0]}"
-
-      - name: Build the Debian package
-        run: ./dk deb
-
-      - name: Check the Debian package
-        run: ./dk verify-deb
-
-      - name: Take screenshots
-        if: always()
-        run: ./dk screenshot 2>&1 | tee screenshot.log || true
-
-      - name: Upload the results
-        if: always()
+      - name: Upload the package
         uses: actions/upload-artifact@v4
         with:
           name: tdepackagekit-${{ github.sha }}
-          path: |
-            dist/
-            screenshots/
-            test.log
-            screenshot.log
+          path: dist/*.deb
+          if-no-files-found: error
