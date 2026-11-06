@@ -55,12 +55,26 @@ installed.
 ## Continuous integration
 
 `.github/workflows/build.yml` runs on every push and pull request. It builds the Debian package and
-uploads it as a workflow artifact. It has read-only access to the repository, and doesn't publish
-anything.
+uploads it as a workflow artifact, on the run's page under **Artifacts**. Those runs have read-only
+access to the repository.
+
+Publishing a release (or pre-release) on GitHub runs it too, and then attaches the `.deb` to the
+release. Only that last step, in its own job, can write to the repository.
 
 It doesn't use Docker, which is only for development. `.github/build-deb.sh` creates a Debian 13
 chroot with `debootstrap`, adds the Trinity repository, installs what `debian/control` asks for, and
 runs `dpkg-buildpackage`. It doesn't run the tests, so run `./dk test` before pushing.
+
+## Making a release
+
+The version is written in a few places. Keep them the same as the release tag:
+
+1. `project( tdepackagekit VERSION x.y.z ...)` in `CMakeLists.txt`, shown in the About dialog
+2. A new entry at the top of `debian/changelog` (`dch -v x.y.z` adds one), which names the `.deb`
+3. The `.TH` lines of the man pages in `doc/man/`, and `<releaseinfo>` in `doc/en/index.docbook`
+
+Merge that, then publish a release on GitHub with the tag `vx.y.z`. The `.deb` is attached to it a
+few minutes later. The release build stops with an error if the tag doesn't match the first two.
 
 ## The application icon
 
