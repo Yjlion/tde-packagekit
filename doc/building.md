@@ -54,12 +54,9 @@ installed.
 
 ## Continuous integration
 
-`.github/workflows/build.yml` runs on every push and pull request. It builds the Debian package and
-uploads it as a workflow artifact, on the run's page under **Artifacts**. Those runs have read-only
-access to the repository.
-
-Publishing a release (or pre-release) on GitHub runs it too, and then attaches the `.deb` to the
-release. Only that last step, in its own job, can write to the repository.
+`.github/workflows/build.yml` builds the Debian package on every push and pull request, and keeps it
+as a workflow artifact, on the run's page under **Artifacts**. These runs have read-only access to
+the repository.
 
 It doesn't use Docker, which is only for development. `.github/build-deb.sh` creates a Debian 13
 chroot with `debootstrap`, adds the Trinity repository, installs what `debian/control` asks for, and
@@ -67,14 +64,23 @@ runs `dpkg-buildpackage`. It doesn't run the tests, so run `./dk test` before pu
 
 ## Making a release
 
-The version is written in a few places. Keep them the same as the release tag:
+Tag a version, `v` followed by the version number, such as `v0.0.5`. Either:
 
-1. `project( tdepackagekit VERSION x.y.z ...)` in `CMakeLists.txt`, shown in the About dialog
-2. A new entry at the top of `debian/changelog` (`dch -v x.y.z` adds one), which names the `.deb`
-3. The `.TH` lines of the man pages in `doc/man/`, and `<releaseinfo>` in `doc/en/index.docbook`
+- On GitHub, **Draft a new release**, type the new tag, and press **Publish release** (or tick
+  **Set as a pre-release** first). Publishing creates the tag, which starts the build. A few minutes
+  later `tdepackagekit-trinity_0.0.5_amd64.deb` is attached to the release.
+- Or push the tag with git: `git tag v0.0.5 && git push origin v0.0.5`. The build creates a
+  **draft** release with the package attached and generated notes. Edit it, then publish it.
 
-Merge that, then publish a release on GitHub with the tag `vx.y.z`. The `.deb` is attached to it a
-few minutes later. The release build stops with an error if the tag doesn't match the first two.
+Saving a release as a draft doesn't create its tag, so nothing is built until it is published.
+
+Nothing needs bumping by hand. `.github/set-version.sh` adds a `debian/changelog` entry for the tag's
+version, and `debian/rules` passes that version to the build, so the package and the About dialogs
+show it. A tag that isn't a version, such as `vnext`, fails the build. The version in
+`CMakeLists.txt` is only used for development builds.
+
+The release job, a separate job that runs only for tags, is the only part of the workflow that can
+write to the repository.
 
 ## The application icon
 

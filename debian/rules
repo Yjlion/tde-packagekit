@@ -1,5 +1,6 @@
 #!/usr/bin/make -f
 export DEB_BUILD_MAINT_OPTIONS = hardening=+all
+include /usr/share/dpkg/pkg-info.mk
 
 %:
 	dh $@ --buildsystem=cmake+ninja
@@ -8,7 +9,8 @@ override_dh_auto_configure:
 	PATH=/opt/trinity/bin:$$PATH dh_auto_configure -- \
 		-DCMAKE_INSTALL_PREFIX=/opt/trinity \
 		-DCMAKE_BUILD_TYPE=RelWithDebInfo \
-		-DBUILD_TESTING=OFF
+		-DBUILD_TESTING=OFF \
+		-DTDEPK_VERSION=$(DEB_VERSION_UPSTREAM)
 
 override_dh_auto_test:
 

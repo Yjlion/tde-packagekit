@@ -29,6 +29,10 @@ echo "$TDE_KEYRING_SHA256  $CHROOT/tmp/trinity-keyring.deb" | sha256sum -c -
 
 mkdir -p "$CHROOT/build/src"
 tar -C "$SOURCE" --exclude=.git --exclude=dist -cf - . | tar -C "$CHROOT/build/src" -xf -
+# For a release, the version comes from the tag (DEB_VERSION=v1.2.3).
+if [ -n "${DEB_VERSION:-}" ]; then
+    "$SOURCE/.github/set-version.sh" "$DEB_VERSION" "$CHROOT/build/src"
+fi
 
 chroot "$CHROOT" /bin/bash -euo pipefail -c "
     export DEBIAN_FRONTEND=noninteractive LC_ALL=C.UTF-8
