@@ -24,9 +24,13 @@ static const int TickMilliseconds = 30 * 60 * 1000;
 Notifier::Notifier()
     : KSystemTray(nullptr, "notifier"), DCOPObject("notifier"),
       m_refresh(nullptr), m_updates(nullptr),
-      m_total(0), m_security(0), m_lastNotified(0), m_pendingList(false)
+      m_total(0), m_security(0), m_lastNotified(0), m_pendingList(false), m_known(false)
 {
     setPixmap(loadIcon("tdepackagekit"));
+    TQToolTip::add(this, i18n("Software Updates: not checked yet"));
+    if (!TdePkSettings::hideWhenIdle()) {
+        show();
+    }
 
     m_timer = new TQTimer(this);
     connect(m_timer, TQ_SIGNAL(timeout()), TQ_SLOT(onTick()));
@@ -170,6 +174,7 @@ void Notifier::onUpdatesFinished(uint exit, uint)
     m_updates->deleteLater();
     m_updates = nullptr;
     if (exit == Pk::ExitSuccess) {
+        m_known = true;
         showState();
     }
     if (m_pendingList) {
@@ -184,7 +189,16 @@ void Notifier::showState()
     const uint relevant = securityOnly ? m_security : m_total;
     if (relevant == 0) {
         m_lastNotified = 0;
-        hide();
+        TQToolTip::remove(this);
+        TQToolTip::add(this, !m_known ? i18n("Software Updates: not checked yet")
+                             : m_total > 0 ? i18n("No security updates")
+                                           : i18n("Your software is up to date"));
+        setPixmap(loadIcon("tdepackagekit"));
+        if (TdePkSettings::hideWhenIdle()) {
+            hide();
+        } else {
+            show();
+        }
         return;
     }
 

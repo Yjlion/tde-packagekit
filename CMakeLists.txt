@@ -20,6 +20,7 @@ set( CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -Wl,--no-undefined"
 
 add_subdirectory( src )
 add_subdirectory( data )
+add_subdirectory( doc )
 
 if( BUILD_TESTING )
   enable_testing( )

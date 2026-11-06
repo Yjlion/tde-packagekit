@@ -63,6 +63,8 @@ int main(int argc, char **argv)
                        description, TDEAboutData::License_GPL_V2,
                        "(c) 2026 Yjlion");
     about.addAuthor("Yjlion", I18N_NOOP("Maintainer"), 0, "https://github.com/Yjlion");
+    /* No "Please use bugs.trinitydesktop.org" line: this isn't a Trinity project. */
+    about.setCustomAuthorText(TQString::null, TQString::null);
     TDECmdLineArgs::init(argc, argv, &about);
     TDECmdLineArgs::addCmdLineOptions(options);
     KUniqueApplication::addCmdLineOptions();

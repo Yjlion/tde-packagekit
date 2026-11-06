@@ -8,6 +8,6 @@ include_directories(
 link_directories( ${TQT_LIBRARY_DIRS} ${TDE_LIB_DIR} )
 
 tde_add_library( tdepkcore STATIC_PIC AUTOMOC
-  SOURCES pkenums.cpp packageid.cpp pkdaemon.cpp pktransaction.cpp changequeue.cpp tdepksettings.cpp
+  SOURCES pkenums.cpp packageid.cpp pkdaemon.cpp pktransaction.cpp changequeue.cpp tdepksettings.cpp appstreamicons.cpp
   LINK ${DBUS_TQT_LIBRARIES} tdecore-shared
 )

@@ -22,6 +22,7 @@ follows Apper, and its package list and details pane follow gnome-packagekit.
 - See the history of software changes, and turn repositories on or off
 - Get a tray notification when updates are available (it never installs on its own)
 - Install a `.deb` by opening it
+- Shows application icons when `apt-config-icons` is installed
 - Prompts for license agreements, unknown signing keys, unverified packages and restarts
 
 ## Quick start
@@ -42,7 +43,10 @@ sudo apt install ./dist/tdepackagekit-trinity_*.deb
 
 ## Documentation
 
-- [User guide](doc/user-guide.md)
+- [User guide](doc/user-guide.md), also installed as a handbook for KHelpCenter
+  ([source](doc/en/index.docbook))
+- Man pages: [tdepackagekit(1)](doc/man/tdepackagekit.1) and
+  [tdepackagekit-notifier(1)](doc/man/tdepackagekit-notifier.1)
 - [Building and packaging](doc/building.md)
 - [Architecture](doc/architecture.md)
 - [Testing](doc/testing.md)

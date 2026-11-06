@@ -4,13 +4,14 @@
 
 | Suite | Files | Covers |
 |---|---|---|
-| Unit | `tests/unit/test_core.cpp` | Package IDs, bitfields, severity order, group names, enums checked against `pk-enum.h` |
+| Unit | `tests/unit/test_core.cpp` | Package IDs, bitfields, severity order, group names, AppStream icon lookup, enums checked against `pk-enum.h` |
 | Core, fake daemon | `tests/integration/test_core_fake.py` | Every signal, in batched and single forms; failures such as a daemon crash or no service |
 | Core, real daemon | `tests/integration/test_core_real.py` | Real `packagekitd` and apt as a non-root user: search, install, update, remove, repos, history, refused authorization. Results are confirmed with `dpkg-query`. |
-| UI, fake daemon | `tests/ui/test_ui_fake.sh` | The real window driven by `xdotool`: all pages, dialogs, prompts and the notifier |
+| UI, fake daemon | `tests/ui/test_ui_fake.sh` | The real window driven by `xdotool`: all pages, dialogs, prompts, app icons, a resizable error window and the notifier |
 | UI, real daemon | `tests/ui/test_ui_real.sh` | End to end: tick, Apply, and the package is on disk |
 
-`./dk verify-deb` is separate, and checks the built package.
+`./dk verify-deb` is separate, and checks the built package: its files, the handbook and man pages,
+the `.deb` file handler, and that Trinity's autostart starts the notifier.
 
 ## The fake daemon
 
@@ -60,7 +61,7 @@ These need a real Trinity session, so check them by hand after installing the pa
 
 - The tray icon appears in Kicker's system tray, and left and right clicks work on it
 - A real polkit password prompt from `polkit-agent-tde` appears, and works
-- The notifier starts at login
+- The notifier starts at a real login (`verify-deb` only runs the launcher's autostart phases)
 - A real apt repository with an unknown signing key (only the fake daemon exercises the key prompt)
 - A real package that requests a license or a restart (also only the fake daemon)
 - Opening a `.deb` from Konqueror

@@ -37,11 +37,20 @@ sudo cmake --install build
 With `-DBUILD_TESTING=ON` you also need `libpackagekit-glib2-dev`. The unit tests use its header
 to check enum values; the application itself doesn't link against it.
 
+## Documentation
+
+`doc/en/index.docbook` is the handbook. The build turns it into `index.cache.bz2` with `meinproc`
+(from `tdelibs14-trinity`), and installs it with screenshots from `screenshots/` to
+`share/doc/tde/HTML/en/tdepackagekit/`. The man pages in `doc/man/` are plain groff, installed to
+`share/man/man1/`. `./dk lint` checks both. The Markdown files in `doc/` are for GitHub and aren't
+installed.
+
 ## Runtime requirements
 
 - Trinity 14.1
 - `packagekit`, with a working backend (apt on Debian)
 - `polkit-agent-tde`, or another polkit agent, so that users can authenticate
+- Optional: `apt-config-icons` or `apt-config-icons-large`, for application icons
 
 ## Continuous integration
 

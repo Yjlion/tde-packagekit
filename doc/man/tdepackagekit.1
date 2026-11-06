@@ -1,0 +1,104 @@
+.\" SPDX-License-Identifier: GPL-2.0-or-later
+.TH TDEPACKAGEKIT 1 "2026-11-05" "tdepackagekit 0.1.0" "Trinity Desktop Environment"
+.SH NAME
+tdepackagekit \- install, remove and update software on the Trinity desktop
+.SH SYNOPSIS
+.B tdepackagekit
+.RB [ \-\-updates ]
+.RB [ \-\-settings ]
+.RB [ \-\-install\-file
+.IR file ]...
+.RI [ "Trinity and TQt options" ]
+.SH DESCRIPTION
+.B tdepackagekit
+(Software Management) is a graphical package manager for the Trinity Desktop
+Environment. It talks to the PackageKit service, so it works on the same
+package database as
+.BR apt (8)
+and the other package tools on the system.
+.PP
+One window has four pages:
+.TP
+.B Browse
+Search for packages by name, description or file name, or by category, and
+tick packages to install or untick them to remove.
+.TP
+.B Updates
+Review available updates, grouped by severity, with changelogs and security
+advisories.
+.TP
+.B History
+See past installs, removals and updates, and whether they worked.
+.TP
+.B Repositories
+Turn software repositories on or off.
+.PP
+Ticking a package only queues the change. Nothing is changed until
+.B Apply
+is pressed. The program then works out the full set of changes, asks for
+confirmation if other packages are affected, and asks for a password through
+the polkit authentication agent.
+.PP
+When
+.B apt\-config\-icons
+or
+.B apt\-config\-icons\-large
+is installed, the package lists show each application's icon from the
+repositories' AppStream data.
+.PP
+Only one copy runs at a time. If it is already running, the options below act
+on the open window.
+.SH OPTIONS
+.TP
+.B \-\-updates
+Open the Updates page.
+.TP
+.B \-\-settings
+Open the settings dialog.
+.TP
+.BI \-\-install\-file " file"
+Install the package file
+.IR file ,
+for example a
+.I .deb
+file. It can be given more than once. Local files can't be verified, so a
+warning is shown before anything is installed.
+.TP
+.B \-\-help
+List the options, including the generic Trinity and TQt ones
+.RB ( \-\-help\-all ).
+.SH FILES
+.TP
+.I ~/.trinity/share/config/tdepackagekitrc
+Settings shared with
+.BR tdepackagekit\-notifier (1).
+.TP
+.I /var/lib/swcatalog/icons/
+.TQ
+.I /var/lib/app\-info/icons/
+AppStream icons, as unpacked by
+.B apt\-config\-icons
+and the AppStream apt hook.
+.SH ENVIRONMENT
+.TP
+.B TDEPK_APPSTREAM_ICON_DIRS
+A colon-separated list of directories to look for AppStream icons in,
+instead of the standard ones. Meant for testing.
+.SH NOTES
+Changing software needs a running polkit agent, normally from the
+.B polkit\-agent\-tde
+package. Without one, changes fail with a \(lqnot authorized\(rq error.
+.PP
+The full handbook is available in KHelpCenter, from
+.B Help \(-> Software Management Handbook
+or at
+.IR help:/tdepackagekit .
+.SH SEE ALSO
+.BR tdepackagekit\-notifier (1),
+.BR pkcon (1),
+.BR apt (8),
+.BR khelpcenter (1)
+.SH BUGS
+Report bugs at https://github.com/Yjlion/tde-packagekit/issues.
+.SH AUTHOR
+Yjlion.

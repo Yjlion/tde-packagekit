@@ -1,13 +1,18 @@
 /* Core library unit tests. Enum values are checked against PackageKit's header. */
 /* SPDX-License-Identifier: GPL-2.0-or-later */
 #include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
 
 #define __PACKAGEKIT_H_INSIDE__
 #include <packagekit-glib2/pk-enum.h>
 #include <packagekit-glib2/pk-bitfield.h>
 
+#include <tqdir.h>
+#include <tqfile.h>
 #include <tqstring.h>
 
+#include "appstreamicons.h"
 #include "packageid.h"
 #include "pkenums.h"
 
@@ -105,12 +110,66 @@ static void testGroups()
     }
 }
 
+static void touch(const TQString &path)
+{
+    TQFile file(path);
+    file.open(IO_WriteOnly);
+}
+
+static void testAppStreamIcons()
+{
+    CHECK(AppStreamIcons::directorySize("64x64") == 64);
+    CHECK(AppStreamIcons::directorySize("64x64@2") == 128);
+    CHECK(AppStreamIcons::directorySize("128x128") == 128);
+    CHECK(AppStreamIcons::directorySize("scalable") == 0);
+    CHECK(AppStreamIcons::directorySize("x64") == 0);
+    CHECK(AppStreamIcons::directorySize("64x64@") == 0);
+
+    char tmpl[] = "/tmp/tdepk-icons-XXXXXX";
+    const TQString root = TQString::fromLatin1(mkdtemp(tmpl));
+    TQDir dir;
+    const char *subdirs[] = { "/debian-main", "/debian-main/48x48", "/debian-main/64x64",
+                              "/debian-main/64x64@2", "/other", "/other/48x48", "/other/scalable" };
+    for (const char *sub : subdirs) {
+        dir.mkdir(root + sub);
+    }
+    touch(root + "/debian-main/48x48/foo_foo.png");
+    touch(root + "/debian-main/64x64/foo_foo.png");
+    touch(root + "/debian-main/64x64@2/bar_org.example.Bar.png");
+    touch(root + "/other/48x48/libfoo-utils_tool.png");
+    touch(root + "/other/48x48/_nameless.png");
+    touch(root + "/other/scalable/baz_baz.png");
+    setenv("TDEPK_APPSTREAM_ICON_DIRS", (root + ":/nonexistent").latin1(), 1);
+    AppStreamIcons::reset();
+
+    CHECK(AppStreamIcons::available());
+    CHECK_EQ(AppStreamIcons::path("foo", 22), root + "/debian-main/48x48/foo_foo.png");
+    CHECK_EQ(AppStreamIcons::path("foo", 48), root + "/debian-main/48x48/foo_foo.png");
+    CHECK_EQ(AppStreamIcons::path("foo", 60), root + "/debian-main/64x64/foo_foo.png");
+    /* Nothing big enough: the largest. */
+    CHECK_EQ(AppStreamIcons::path("foo", 256), root + "/debian-main/64x64/foo_foo.png");
+    CHECK_EQ(AppStreamIcons::path("bar", 16), root + "/debian-main/64x64@2/bar_org.example.Bar.png");
+    CHECK_EQ(AppStreamIcons::path("libfoo-utils", 16), root + "/other/48x48/libfoo-utils_tool.png");
+    CHECK(AppStreamIcons::path("baz", 16).isEmpty());
+    CHECK(AppStreamIcons::path("fo", 16).isEmpty());
+    CHECK(AppStreamIcons::path("", 16).isEmpty());
+
+    setenv("TDEPK_APPSTREAM_ICON_DIRS", "/nonexistent", 1);
+    AppStreamIcons::reset();
+    CHECK(!AppStreamIcons::available());
+    CHECK(AppStreamIcons::path("foo", 16).isEmpty());
+    unsetenv("TDEPK_APPSTREAM_ICON_DIRS");
+    AppStreamIcons::reset();
+    system(("rm -rf '" + root + "'").latin1());
+}
+
 int main()
 {
     testPackageId();
     testBitfield();
     testSeverity();
     testGroups();
+    testAppStreamIcons();
     printf(failures ? "%d failure(s)\n" : "all core tests passed\n", failures);
     return failures ? 1 : 0;
 }

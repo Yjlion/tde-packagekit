@@ -9,8 +9,8 @@
 
 #include <tdelistview.h>
 #include <tdelocale.h>
-#include <tdemessagebox.h>
 
+#include "errordialog.h"
 #include "pkenums.h"
 #include "pktransaction.h"
 #include "queryhelper.h"
@@ -146,8 +146,8 @@ void ReposPage::afterEnable()
 {
     if (!m_enableSucceeded) {
         if (m_errorCode) {
-            KMessageBox::detailedError(this, Pk::errorLabel(m_errorCode), m_errorDetails,
-                                       i18n("Could Not Change Repository"));
+            ErrorDialog::report(this, i18n("Could Not Change Repository"), Pk::errorLabel(m_errorCode),
+                                m_errorDetails);
         }
     } else {
         emit reposChanged();

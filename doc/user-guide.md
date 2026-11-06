@@ -5,6 +5,10 @@ between four pages (or press Ctrl+1 to Ctrl+4). The bar at the bottom shows your
 
 The screenshots come from the test suite, which is why the packages are called `fake-*`.
 
+The same guide is in KHelpCenter: choose **Help > Software Management Handbook**, or open
+`help:/tdepackagekit`. For the command line, see `man tdepackagekit` and
+`man tdepackagekit-notifier`.
+
 ## Browse
 
 ![Browse page](../screenshots/browse-details.png)
@@ -20,6 +24,18 @@ Select a package to see its details, files, what it depends on and what requires
 
 Nothing changes until you press **Apply**. You can keep browsing and tick more first, and
 **Clear** drops every pending change.
+
+### Application icons
+
+The lists show each application's icon if one of these packages is installed:
+
+- `apt-config-icons`: 48 and 64 pixel icons
+- `apt-config-icons-large`: also 128 pixel icons
+
+They make apt download the icons from Debian's AppStream data. After installing one, refresh the
+package information (**File > Check for Updates**, or `sudo apt update`) and restart Software
+Management. Packages that aren't applications, such as libraries, get a generic package icon.
+Without either package, the lists have no icons.
 
 ## Applying changes
 
@@ -38,6 +54,11 @@ You may be asked for your password. That prompt comes from the Trinity authentic
 (the `polkit-agent-tde` package). Without a running agent, changes fail with a "not authorized" error.
 
 If something fails, the changes that didn't happen stay pending so that you can try again.
+
+![Error with details](../screenshots/error-dialog.png)
+
+The error message has a **Details** button with the full report from the package system, such as
+`dpkg`'s output. Resize or maximize the window to read long reports; it remembers the size.
 
 Depending on the packages, you may also see:
 
@@ -75,8 +96,14 @@ general way to do it. On Debian, add them with `apt` or by editing `/etc/apt/sou
 
 ## Update notifier
 
-The notifier starts when you log in, and stays hidden until there are updates. Click its tray icon
-to open the Updates page, or right-click it to check now or change settings.
+The notifier starts when you log in and puts an icon in the system tray. Its tooltip says whether
+updates are available, and a message pops up when new ones arrive. Click the icon to open the
+Updates page, or right-click it to check now or change settings. It waits about two minutes after
+login before its first check.
+
+If you'd rather have no icon while there's nothing to install, turn on **Hide the tray icon when
+there are no updates** in the settings. To see whether the notifier is running, use
+`pgrep -a tdepackagekit-notifier`.
 
 It only tells you about updates. **It never installs anything by itself.**
 
@@ -84,8 +111,12 @@ It only tells you about updates. **It never installs anything by itself.**
 
 ![Settings dialog](../screenshots/settings.png)
 
-Open **Settings > Configure Software Management**. You can turn off the tray icon, set how often to
-check (every 6 hours, daily, weekly, monthly or never), and limit notifications to security updates.
+Open **Settings > Configure Software Management**. You can:
+
+- turn the notifier off (turning it back on starts it at once)
+- hide its icon while there are no updates
+- set how often to check: every 6 hours, daily, weekly, monthly or never
+- limit notifications to security updates
 
 ## Installing a package file
 

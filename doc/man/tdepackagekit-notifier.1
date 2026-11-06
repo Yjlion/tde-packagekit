@@ -1,0 +1,68 @@
+.\" SPDX-License-Identifier: GPL-2.0-or-later
+.TH TDEPACKAGEKIT-NOTIFIER 1 "2026-11-05" "tdepackagekit 0.1.0" "Trinity Desktop Environment"
+.SH NAME
+tdepackagekit\-notifier \- tray icon that shows when software updates are available
+.SH SYNOPSIS
+.B tdepackagekit\-notifier
+.RI [ "Trinity and TQt options" ]
+.SH DESCRIPTION
+.B tdepackagekit\-notifier
+puts an icon in the Trinity system tray and tells you when software updates
+are available. It asks PackageKit for fresh package information at the chosen
+interval, and shows a message when there are new updates. The icon turns into
+a warning when some of them fix security problems.
+.PP
+It only notifies.
+.B It never installs anything by itself.
+.PP
+Clicking the icon opens the Updates page of
+.BR tdepackagekit (1).
+Its context menu can check now, open the settings, or quit until the next
+login.
+.PP
+It starts at login from
+.IR /opt/trinity/share/autostart/tdepackagekit\-notifier.desktop ,
+unless it is turned off in the settings. It waits a little after login before
+its first check. Only one copy runs at a time.
+.SH SETTINGS
+The settings are changed in
+.BR "tdepackagekit \-\-settings" ,
+and stored in the
+.B [Notifier]
+group of
+.IR ~/.trinity/share/config/tdepackagekitrc :
+.TP
+.BR Enabled " (default " true )
+Run the notifier. When false it exits, and isn't started at login.
+.TP
+.BR HideWhenIdle " (default " false )
+Hide the tray icon while there are no updates to show.
+.TP
+.BR CheckIntervalHours " (default " 24 )
+Hours between automatic refreshes of the package information.
+.B 0
+means never refresh; updates downloaded by other tools are still noticed.
+.TP
+.BR NotifySecurityOnly " (default " false )
+Only notify about security updates.
+.TP
+.BR InitialDelaySeconds " (default " 120 )
+Seconds to wait after starting before the first check.
+.SH DCOP INTERFACE
+The notifier registers as
+.B tdepackagekit\-notifier
+with an object called
+.BR notifier :
+.TP
+.B dcop tdepackagekit\-notifier notifier checkNow
+Refresh the package information and check for updates now.
+.TP
+.B dcop tdepackagekit\-notifier notifier reloadSettings
+Read the settings again.
+.SH SEE ALSO
+.BR tdepackagekit (1),
+.BR dcop (1)
+.SH BUGS
+Report bugs at https://github.com/Yjlion/tde-packagekit/issues.
+.SH AUTHOR
+Yjlion.

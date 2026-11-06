@@ -13,6 +13,7 @@ Package: tdepackagekit-trinity
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}, packagekit
 Recommends: polkit-agent-tde
+Suggests: apt-config-icons, apt-config-icons-large
 Description: PackageKit software manager for the Trinity Desktop Environment
  Install, remove and update software on Trinity with one window: browse and
  search packages, review and apply updates, see the history of changes, and

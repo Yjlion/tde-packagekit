@@ -19,6 +19,11 @@ public:
     static bool notifierEnabled();
     static void setNotifierEnabled(bool enabled);
 
+    /* Hide the tray icon while there are no updates. Off by default, so the
+       icon shows from login and the user can see the notifier is running. */
+    static bool hideWhenIdle();
+    static void setHideWhenIdle(bool hide);
+
     /* Seconds since the epoch of the notifier's last automatic check. */
     static long lastAutomaticCheck();
     static void setLastAutomaticCheck(long when);

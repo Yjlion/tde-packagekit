@@ -22,6 +22,7 @@
 #include <tdelocale.h>
 
 #include "changequeue.h"
+#include "packageicon.h"
 #include "packageid.h"
 #include "pkdaemon.h"
 #include "pkenums.h"
@@ -47,6 +48,7 @@ public:
         m_package = package;
         const PackageId id(package.id);
         setText(ColName, id.name());
+        setPixmap(ColName, PackageIcon::small(id.name()));
         setText(ColVersion, id.version());
         setText(ColSummary, package.summary);
     }
@@ -491,7 +493,9 @@ void BrowsePage::onRelatedPackage(const PkPackage &package)
         return;
     }
     const PackageId id(package.id);
-    new TQListViewItem(m_infoList, id.name(), id.version(), package.summary, Pk::infoLabel(package.info));
+    TQListViewItem *item = new TQListViewItem(m_infoList, id.name(), id.version(), package.summary,
+                                              Pk::infoLabel(package.info));
+    item->setPixmap(0, PackageIcon::small(id.name()));
 }
 
 void BrowsePage::onInfoFinished(uint exit, uint)

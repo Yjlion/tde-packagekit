@@ -7,8 +7,19 @@ export SHOT_DIR="${SHOT_DIR:-/src/screenshots}"
 SHOTS="${TAKE_SCREENSHOTS:-0}"
 shot() { [ "$SHOTS" = 1 ] && ui_shot "$1"; return 0; }
 
+# AppStream icons as apt-config-icons would leave them. Only some packages have one,
+# like on a real system.
+ICONS=$(mktemp -d)
+mkdir -p "$ICONS/fake-main/48x48" "$ICONS/fake-main/64x64"
+convert -size 64x64 xc:none -fill '#3a7bd5' -draw 'roundrectangle 4,4 59,59 10,10' \
+    -fill white -draw 'rectangle 16,18 47,22 rectangle 16,30 47,34 rectangle 16,42 38,46' \
+    "$ICONS/fake-main/64x64/fake-editor_org.example.Editor.png"
+convert -size 48x48 radial-gradient:'#ffb84d-#e0601b' "$ICONS/fake-main/48x48/fake-browser_org.example.Browser.png"
+convert -size 48x48 xc:'#5aa55a' -fill white -draw 'polygon 8,14 40,14 24,30' "$ICONS/fake-main/48x48/fake-mail_org.example.Mail.png"
+export TDEPK_APPSTREAM_ICON_DIRS=$ICONS
+
 ui_session_start
-trap 'fake_stop; ui_session_stop' EXIT
+trap 'fake_stop; ui_session_stop; rm -rf "$ICONS"' EXIT
 fake_start
 app_start
 shot browse-empty
@@ -16,6 +27,10 @@ shot browse-empty
 # Browsing ---------------------------------------------------------------------
 search_for fake
 check "search reaches the daemon" fake_called "SearchNames .* fake"
+# The editor's blue icon is drawn in the results list.
+blue=$(import -window root -crop 420x420+340+140 png:- 2>/dev/null |
+    convert - -fuzz 12% -fill black +opaque '#3a7bd5' -fill white -opaque '#3a7bd5' -format '%[fx:mean*w*h]' info:)
+[ "${blue%.*}" -gt 20 ] 2>/dev/null && pass "package list shows AppStream icons" || fail "package list shows AppStream icons ($blue px)"
 shot browse-search
 
 click $ROW1_NAME
@@ -108,8 +123,15 @@ check "installing anyway drops ONLY_TRUSTED" fake_called "InstallPackages 0 fake
 search_for fake-fail
 click $ROW1_BOX
 press_apply
-ui_wait_window "Could Not Apply Changes" 10 >/dev/null && pass "failures are reported" || fail "failures are reported"
+ERR=$(ui_wait_window "Could Not Apply Changes" 10) && pass "failures are reported" || fail "failures are reported"
 shot error-dialog
+# The details must be readable: the window has to grow when the user drags it.
+if [ -n "${ERR:-}" ]; then
+    xdotool windowsize --sync "$ERR" 900 600 2>/dev/null || true
+    sleep 0.5
+    size=$(xwininfo -id "$ERR" | awk '/Width:/ {w=$2} /Height:/ {h=$2} END {print w "x" h}')
+    [ "$size" = 900x600 ] && pass "error dialog is resizable" || fail "error dialog is resizable (got $size)"
+fi
 key Return
 sleep 1
 key alt+r

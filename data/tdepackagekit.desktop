@@ -9,3 +9,4 @@ Terminal=false
 Categories=Qt;X-TDE;System;PackageManager;
 OnlyShowIn=TDE;
 X-DCOP-ServiceType=Unique
+X-DocPath=tdepackagekit/index.html
