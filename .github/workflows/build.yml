@@ -3,6 +3,9 @@ name: Build Debian package
 on:
   push:
   pull_request:
+  # Publishing a release (or pre-release) builds the package and attaches it.
+  release:
+    types: [published]
 
 permissions:
   contents: read
@@ -14,6 +17,18 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Check the release tag matches the version
+        if: github.event_name == 'release'
+        env:
+          TAG: ${{ github.event.release.tag_name }}
+        run: |
+          deb=$(sed -n '1s/^[^(]*(\([^)]*\)).*/\1/p' debian/changelog)
+          cmake=$(sed -n 's/^project( tdepackagekit VERSION \([^ ]*\) .*/\1/p' CMakeLists.txt)
+          if [ "$TAG" != "v$deb" ] || [ "$cmake" != "$deb" ]; then
+            echo "::error::Tag $TAG, debian/changelog $deb and CMakeLists.txt $cmake must match (tag v$deb)."
+            exit 1
+          fi
+
       - name: Build the package for Debian 13 and Trinity 14.1
         run: sudo .github/build-deb.sh
 
@@ -23,3 +38,23 @@ jobs:
           name: tdepackagekit-${{ github.sha }}
           path: dist/*.deb
           if-no-files-found: error
+
+  # A separate job, so that only this step can write to the repository.
+  attach:
+    if: github.event_name == 'release'
+    needs: deb
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: tdepackagekit-${{ github.sha }}
+          path: dist
+
+      - name: Attach the package to the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ github.event.release.tag_name }}
+        run: gh release upload "$TAG" dist/*.deb --clobber --repo "$GITHUB_REPOSITORY"

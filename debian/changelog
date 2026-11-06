@@ -1,4 +1,21 @@
-tdepackagekit-trinity (0.1.0) unstable; urgency=medium
+tdepackagekit-trinity (0.0.3) unstable; urgency=medium
+
+  * Show application icons when apt-config-icons is installed.
+  * Make the error details window resizable.
+  * Show the notifier's tray icon from login, with an option to hide it
+    when there are no updates.
+  * Add a handbook for KHelpCenter and man pages.
+  * Version numbers now follow the release tags.
+
+ -- Yjlion <32956705+Yjlion@users.noreply.github.com>  Thu, 05 Nov 2026 21:00:00 +0000
+
+tdepackagekit-trinity (0.0.2) unstable; urgency=medium
+
+  * Build the Debian package in CI without Docker.
+
+ -- Yjlion <32956705+Yjlion@users.noreply.github.com>  Thu, 05 Nov 2026 17:30:00 +0000
+
+tdepackagekit-trinity (0.0.1) unstable; urgency=medium
 
   * Initial version.
 
