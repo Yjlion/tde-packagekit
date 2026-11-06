@@ -1,11 +1,16 @@
 name: Build Debian package
 
+# Every push and pull request builds the package, kept as a workflow artifact.
+#
+# A version tag (v1.2.3) also makes a release. The tag is created when you publish a
+# release on GitHub, or when you push it with git. The package is built with the tag's
+# version and attached to the tag's release; if the tag has no release yet, a draft
+# release is created with the package, for you to edit and publish.
 on:
   push:
+    branches: ['**']
+    tags: ['v*']
   pull_request:
-  # Publishing a release (or pre-release) builds the package and attaches it.
-  release:
-    types: [published]
 
 permissions:
   contents: read
@@ -17,20 +22,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Check the release tag matches the version
-        if: github.event_name == 'release'
-        env:
-          TAG: ${{ github.event.release.tag_name }}
-        run: |
-          deb=$(sed -n '1s/^[^(]*(\([^)]*\)).*/\1/p' debian/changelog)
-          cmake=$(sed -n 's/^project( tdepackagekit VERSION \([^ ]*\) .*/\1/p' CMakeLists.txt)
-          if [ "$TAG" != "v$deb" ] || [ "$cmake" != "$deb" ]; then
-            echo "::error::Tag $TAG, debian/changelog $deb and CMakeLists.txt $cmake must match (tag v$deb)."
-            exit 1
-          fi
-
       - name: Build the package for Debian 13 and Trinity 14.1
-        run: sudo .github/build-deb.sh
+        env:
+          TAG: ${{ github.ref_type == 'tag' && github.ref_name || '' }}
+        run: sudo env DEB_VERSION="$TAG" .github/build-deb.sh
 
       - name: Upload the package
         uses: actions/upload-artifact@v4
@@ -40,8 +35,8 @@ jobs:
           if-no-files-found: error
 
   # A separate job, so that only this step can write to the repository.
-  attach:
-    if: github.event_name == 'release'
+  release:
+    if: github.ref_type == 'tag'
     needs: deb
     runs-on: ubuntu-latest
     timeout-minutes: 10
@@ -56,5 +51,11 @@ jobs:
       - name: Attach the package to the release
         env:
           GH_TOKEN: ${{ github.token }}
-          TAG: ${{ github.event.release.tag_name }}
-        run: gh release upload "$TAG" dist/*.deb --clobber --repo "$GITHUB_REPOSITORY"
+          TAG: ${{ github.ref_name }}
+        run: |
+          if gh release view "$TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            gh release upload "$TAG" dist/*.deb --clobber --repo "$GITHUB_REPOSITORY"
+          else
+            gh release create "$TAG" dist/*.deb --draft --verify-tag --generate-notes \
+              --title "$TAG" --repo "$GITHUB_REPOSITORY"
+          fi
