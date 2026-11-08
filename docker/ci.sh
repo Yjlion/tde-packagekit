@@ -39,9 +39,9 @@ case "${1:-}" in
         (cd /build/deb/src && dpkg-buildpackage -us -uc -b)
         mkdir -p /src/dist
         rm -f /src/dist/*.deb
-        cp /build/deb/tdepackagekit-trinity_*.deb /src/dist/
+        cp /build/deb/tde-packagekit-trinity_*.deb /src/dist/
         ls -l /src/dist
-        lintian --no-tag-display-limit /src/dist/tdepackagekit-trinity_*.deb || true
+        lintian --no-tag-display-limit /src/dist/tde-packagekit-trinity_*.deb || true
         ;;
     verify-deb)
         tests/ui/verify_deb.sh

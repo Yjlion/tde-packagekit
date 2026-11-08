@@ -46,6 +46,6 @@ chroot "$CHROOT" /bin/bash -euo pipefail -c "
 "
 
 mkdir -p "$SOURCE/dist"
-cp "$CHROOT"/build/tdepackagekit-trinity_*.deb "$SOURCE/dist/"
-dpkg-deb --info "$SOURCE"/dist/tdepackagekit-trinity_*.deb
-dpkg-deb --contents "$SOURCE"/dist/tdepackagekit-trinity_*.deb | grep -E 'bin/tdepackagekit'
+cp "$CHROOT"/build/tde-packagekit-trinity_*.deb "$SOURCE/dist/"
+dpkg-deb --info "$SOURCE"/dist/tde-packagekit-trinity_*.deb
+dpkg-deb --contents "$SOURCE"/dist/tde-packagekit-trinity_*.deb | grep -E 'bin/tdepackagekit'

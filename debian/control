@@ -1,4 +1,4 @@
-Source: tdepackagekit-trinity
+Source: tde-packagekit-trinity
 Section: admin
 Priority: optional
 Maintainer: Yjlion <32956705+Yjlion@users.noreply.github.com>
@@ -9,8 +9,10 @@ Build-Depends: debhelper-compat (= 13), cmake, ninja-build, pkg-config,
 Standards-Version: 4.7.0
 Rules-Requires-Root: no
 
-Package: tdepackagekit-trinity
+Package: tde-packagekit-trinity
 Architecture: any
+Breaks: tdepackagekit-trinity (<< ${source:Version})
+Replaces: tdepackagekit-trinity (<< ${source:Version})
 Depends: ${shlibs:Depends}, ${misc:Depends}, packagekit
 Recommends: polkit-agent-tde
 Suggests: apt-config-icons, apt-config-icons-large
