@@ -8,14 +8,14 @@ pass() { echo "ok   - $1"; }
 fail() { echo "FAIL - $1"; FAILS=$((FAILS + 1)); }
 check() { local d=$1; shift; if "$@"; then pass "$d"; else fail "$d"; fi; }
 
-DEB=$(ls /src/dist/tdepackagekit-trinity_*.deb | head -1)
+DEB=$(ls /src/dist/tde-packagekit-trinity_*.deb | head -1)
 [ -n "$DEB" ] || { echo "no package in dist/; run ./dk deb first"; exit 1; }
 
 # Every dependency must be resolvable from the configured repositories.
 check "dependencies resolve" apt-get install -s "$DEB"
 
 sudo /usr/bin/dpkg -i "$DEB" >/tmp/dpkg.log 2>&1 || { tail -5 /tmp/dpkg.log; fail "package installs"; }
-check "package installs" dpkg -s tdepackagekit-trinity
+check "package installs" dpkg -s tde-packagekit-trinity
 
 P=/opt/trinity
 check "application binary"      test -x $P/bin/tdepackagekit

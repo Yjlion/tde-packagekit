@@ -2,7 +2,7 @@
 /dist/
 /obj-*/
 /debian/.debhelper/
-/debian/tdepackagekit-trinity/
+/debian/tde-packagekit-trinity/
 /debian/files
 /debian/*.substvars
 /debian/*.debhelper*

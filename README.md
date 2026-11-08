@@ -38,7 +38,7 @@ Everything builds and runs in Docker, so nothing is installed on your computer:
 To install the package on Debian 13 with Trinity 14.1:
 
 ```sh
-sudo apt install ./dist/tdepackagekit-trinity_*.deb
+sudo apt install ./dist/tde-packagekit-trinity_*.deb
 ```
 
 ## Documentation

@@ -68,7 +68,7 @@ Tag a version, `v` followed by the version number, such as `v0.0.5`. Either:
 
 - On GitHub, **Draft a new release**, type the new tag, and press **Publish release** (or tick
   **Set as a pre-release** first). Publishing creates the tag, which starts the build. A few minutes
-  later `tdepackagekit-trinity_0.0.5_amd64.deb` is attached to the release.
+  later `tde-packagekit-trinity_0.0.5_amd64.deb` is attached to the release.
 - Or push the tag with git: `git tag v0.0.5 && git push origin v0.0.5`. The build creates a
   **draft** release with the package attached and generated notes. Edit it, then publish it.
 
