@@ -58,9 +58,13 @@ installed.
 as a workflow artifact, on the run's page under **Artifacts**. These runs have read-only access to
 the repository.
 
-It doesn't use Docker, which is only for development. `.github/build-deb.sh` creates a Debian 13
+It doesn't use Docker, which is only for development. `.github/build-deb.sh` creates a Debian
 chroot with `debootstrap`, adds the Trinity repository, installs what `debian/control` asks for, and
 runs `dpkg-buildpackage`. It doesn't run the tests, so run `./dk test` before pushing.
+
+The workflow builds for Debian 13 trixie and Debian 12 bookworm (`SUITE=trixie` or `SUITE=bookworm`
+for `build-deb.sh`). The bookworm package gets `~bookworm` appended to its version, such as
+`0.0.5~bookworm`, so its file name differs from the trixie package and it sorts below it.
 
 ## Making a release
 
@@ -68,9 +72,10 @@ Tag a version, `v` followed by the version number, such as `v0.0.5`. Either:
 
 - On GitHub, **Draft a new release**, type the new tag, and press **Publish release** (or tick
   **Set as a pre-release** first). Publishing creates the tag, which starts the build. A few minutes
-  later `tde-packagekit-trinity_0.0.5_amd64.deb` is attached to the release.
+  later `tde-packagekit-trinity_0.0.5_amd64.deb` and `tde-packagekit-trinity_0.0.5~bookworm_amd64.deb`
+  are attached to the release.
 - Or push the tag with git: `git tag v0.0.5 && git push origin v0.0.5`. The build creates a
-  **draft** release with the package attached and generated notes. Edit it, then publish it.
+  **draft** release with the packages attached and generated notes. Edit it, then publish it.
 
 Saving a release as a draft doesn't create its tag, so nothing is built until it is published.
 

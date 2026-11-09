@@ -35,7 +35,7 @@ Everything builds and runs in Docker, so nothing is installed on your computer:
 ./dk deb          # build the Debian package into dist/
 ```
 
-To install the package on Debian 13 with Trinity 14.1:
+To install the package on Debian 13 trixie or Debian 12 bookworm with Trinity 14.1:
 
 ```sh
 sudo apt install ./dist/tde-packagekit-trinity_*.deb
