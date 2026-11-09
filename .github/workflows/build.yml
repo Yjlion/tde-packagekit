@@ -17,20 +17,26 @@ permissions:
 
 jobs:
   deb:
+    name: Debian ${{ matrix.suite }}
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        suite: [ bookworm, trixie ]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
-      - name: Build the package for Debian 13 and Trinity 14.1
+      - name: Build the package for Debian ${{ matrix.suite }} and Trinity 14.1
         env:
           TAG: ${{ github.ref_type == 'tag' && github.ref_name || '' }}
-        run: sudo env DEB_VERSION="$TAG" .github/build-deb.sh
+          SUITE: ${{ matrix.suite }}
+        run: sudo env DEB_VERSION="$TAG" SUITE="$SUITE" .github/build-deb.sh
 
       - name: Upload the package
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
-          name: tdepackagekit-${{ github.sha }}
+          name: tdepackagekit-${{ matrix.suite }}-${{ github.sha }}
           path: dist/*.deb
           if-no-files-found: error
 
@@ -43,10 +49,11 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v8
         with:
-          name: tdepackagekit-${{ github.sha }}
+          pattern: tdepackagekit-*-${{ github.sha }}
           path: dist
+          merge-multiple: true
 
       - name: Attach the package to the release
         env:
